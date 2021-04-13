@@ -1,4 +1,4 @@
-baseurl = "https://badriy.netlify.app/"
+baseurl = "https://badry.netlify.app/"
 languageCode = "en-us"
 title = "badriyah blog"
 theme = "hugo-lithium"

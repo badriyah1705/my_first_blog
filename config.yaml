@@ -1,9 +1,9 @@
-baseurl: /
+baseurl: https://badry.netlify.app/
 languageCode: en-us
-title: A Hugo website
+title: badriyah blog
 theme: hugo-lithium
 googleAnalytics: ''
-disqusShortname: ''
+disqusShortname: 'badriyah'
 ignoreFiles:
   - \.Rmd$
   - \.Rmarkdown$
@@ -17,13 +17,13 @@ menu:
     - name: About
       url: /about/
     - name: GitHub
-      url: https://github.com/rstudio/blogdown
-    - name: Twitter
-      url: https://twitter.com/rstudio
+      url: https://github.com/badriyah1705
+    - name: Instagram
+      url: https://www.instagram.com/badriyahzahirah/
 params:
   MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
   MathJaxVersion: 2.7.5
-  description: A website built through Hugo and blogdown.
+  description: badriyah personal data blog
   favicon: favicon.ico
   highlightjsCDN: //cdnjs.cloudflare.com/ajax/libs
   highlightjsLang:
