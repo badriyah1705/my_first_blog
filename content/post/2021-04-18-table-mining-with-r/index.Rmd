@@ -43,4 +43,9 @@ barplot(dtf[, "Pts"],
         # ubah orientasi menajadi horizontal
         horiz=TRUE)
 ```
-
+Referensi:
+https://www.bbc.com/sport/football/premier-league/table
+https://www.netlify.com/
+https://gohugo.io/
+https://www.netlify.com/authors/david-calavera/
+https://bookdown.org/moh_rosidi2610/Metode_Numerik/dataviz.html#plotfunc
