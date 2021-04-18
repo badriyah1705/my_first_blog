@@ -2,7 +2,7 @@ baseurl: https://badry.netlify.app/
 languageCode: en-us
 title: badriyah blog
 theme: hugo-lithium
-googleAnalytics: ''
+googleAnalytics: 'UA-4xxx'
 disqusShortname: 'badriyah'
 ignoreFiles:
   - \.Rmd$

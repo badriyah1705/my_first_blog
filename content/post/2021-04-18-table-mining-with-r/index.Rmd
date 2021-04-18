@@ -1,0 +1,46 @@
+---
+title: Table Mining with R
+author: Badriyah
+date: '2021-04-18'
+slug: table-mining-with-r
+categories:
+  - R
+tags:
+  - R Markdown
+  - plot
+---
+Klasemen Sementara Liga Premier
+
+Jadwal Pertandingan Premier League 2020/2021 diawali 12 September 2020 dan berakhir pada 23 Mei 2021.Berikut adalah tabelklasemen sementara, update terbaru Live Score,disertai dengan daftar Top Score.
+
+Sumber: https://www.bbc.com/sport/football/tables
+Last updated 17th April 2021 at 14:14
+
+```{r}
+dtf<- read.table(file="epl.csv", header =TRUE, sep = ",")
+dtf[1:1] <- list(NULL)
+print (dtf)
+```
+
+Legenda
+P   : Played
+W   : Won
+F   : For
+A   : Against
+GD  : GD
+Pts : Points
+Form: Form
+
+```{r}
+par(mfrow=c(1,1))
+barplot(dtf[, "Pts"],
+        # ubah warna ouline menjadi steelblue
+        border="steelblue",
+        # ubah wana box
+        col= c("grey", "yellow", "steelblue", "green", "orange"),
+        # ubah nama grup dari A sampai E
+        names.arg = LETTERS[1:20],
+        # ubah orientasi menajadi horizontal
+        horiz=TRUE)
+```
+
