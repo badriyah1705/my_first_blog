@@ -1,8 +1,8 @@
 ---
-title: Table Mining with R
-author: Badriyah
+title: Web Scraping with R:Klasemen Akhir Liga Premier 2021
+author: Ufil Hidayatul Laili, Badriyah
 date: '2021-04-18'
-slug: table-mining-with-r
+slug: Web Scraping
 categories:
   - R
 tags:
@@ -10,57 +10,201 @@ tags:
   - plot
 ---
 
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<p>Klasemen Sementara Liga Premier</p>
-<p>Jadwal Pertandingan Premier League 2020/2021 diawali 12 September 2020 dan berakhir pada 23 Mei 2021. Berikut adalah tabel klasemen sementara, update terbaru Live Score, disertai dengan daftar Top Score dan visualisasinya.</p>
+<p>LigaPremier 2020/2021 diawali 12 September 2020 dan berakhir pada 23 Mei 2021. Berikut ini adalah tabel hasil perolehan Liga Premier, update terbaru Live Score, disertai dengan daftar Top Score dan visualisasinya.</p>
 <p>Sumber: <a href="https://www.bbc.com/sport/football/tables" class="uri">https://www.bbc.com/sport/football/tables</a>
-Last updated 17th April 2021 at 14:14</p>
-<pre class="r"><code>dtf&lt;- read.table(file=&quot;epl.csv&quot;, header =TRUE, sep = &quot;,&quot;)
-dtf[1:1] &lt;- list(NULL)
-print (dtf)</code></pre>
-<pre><code>##              Team  P  W  D  L  F  A  GD Pts      Form
-## 1        Man City 32 23  5  4 67 23  44  74 L,W,W,W,L
-## 2         Man Utd 31 18  9  4 61 34  27  63 D,W,W,W,W
-## 3       Leicester 31 17  5  9 55 37  18  56 D,W,W,L,L
-## 4        West Ham 32 16  7  9 53 42  11  55 W,L,D,W,W
-## 5         Chelsea 31 15  9  7 50 31  19  54 W,W,D,L,W
-## 6       Liverpool 31 15  7  9 53 37  16  52 L,L,W,W,W
-## 7       Tottenham 32 14  8 10 54 37  17  50 L,W,D,L,D
-## 8         Everton 31 14  7 10 43 40   3  49 L,L,D,D,D
-## 9         Arsenal 31 13  6 12 43 35   8  45 D,W,D,L,W
-## 10          Leeds 31 14  3 14 49 49   0  45 L,D,W,W,W
-## 11    Aston Villa 30 13  5 12 43 33  10  44 D,D,L,W,L
-## 12         Wolves 31 10  8 13 31 41 -10  38 L,D,L,L,W
-## 13 Crystal Palace 31 10  8 13 33 52 -19  38 D,L,W,D,L
-## 14    Southampton 31 10  6 15 39 56 -17  36 W,L,L,W,L
-## 15      Newcastle 32  9  8 15 35 53 -18  35 D,D,L,D,W
-## 16       Brighton 31  7 12 12 33 38  -5  33 L,W,W,L,D
-## 17        Burnley 31  8  9 14 25 42 -17  33 D,D,W,L,L
-## 18         Fulham 32  5 11 16 24 42 -18  26 W,L,L,L,L
-## 19      West Brom 31  5  9 17 28 59 -31  24 L,D,L,W,W
-## 20      Sheff Utd 31  4  2 25 17 55 -38  14 W,L,L,L,L</code></pre>
+Last updated 4rd Juni 2021 at 14:14</p>
+<p>loading library</p>
+<pre class="r"><code>library(rvest)
+library(stringr)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ forcats 0.5.1
+## ✓ readr   1.4.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter()         masks stats::filter()
+## x readr::guess_encoding() masks rvest::guess_encoding()
+## x dplyr::lag()            masks stats::lag()</code></pre>
+<pre class="r"><code>library(data.table)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;data.table&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     between, first, last</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     transpose</code></pre>
+<p>membaca file HTML dari halaman website</p>
+<pre class="r"><code>url &lt;- &quot;https://www.bbc.com/sport/football/premier-league/table&quot;
+html &lt;- url %&gt;% read_html</code></pre>
+<p>membuat data frame dan menampilkan strukturnya</p>
+<pre class="r"><code>epl_table &lt;- html %&gt;%
+  html_node(&quot;.gs-o-table&quot;) %&gt;%
+  html_table
+
+str(epl_table)</code></pre>
+<pre><code>## tibble [21 × 12] (S3: tbl_df/tbl/data.frame)
+##  $     : chr [1:21] &quot;1&quot; &quot;2&quot; &quot;3&quot; &quot;4&quot; ...
+##  $     : chr [1:21] &quot;team hasn&#39;t moved&quot; &quot;team hasn&#39;t moved&quot; &quot;team hasn&#39;t moved&quot; &quot;team hasn&#39;t moved&quot; ...
+##  $ Team: chr [1:21] &quot;Man City&quot; &quot;Man Utd&quot; &quot;Liverpool&quot; &quot;Chelsea&quot; ...
+##  $ P   : chr [1:21] &quot;38&quot; &quot;38&quot; &quot;38&quot; &quot;38&quot; ...
+##  $ W   : chr [1:21] &quot;27&quot; &quot;21&quot; &quot;20&quot; &quot;19&quot; ...
+##  $ D   : chr [1:21] &quot;5&quot; &quot;11&quot; &quot;9&quot; &quot;10&quot; ...
+##  $ L   : chr [1:21] &quot;6&quot; &quot;6&quot; &quot;9&quot; &quot;9&quot; ...
+##  $ F   : chr [1:21] &quot;83&quot; &quot;73&quot; &quot;68&quot; &quot;58&quot; ...
+##  $ A   : chr [1:21] &quot;32&quot; &quot;44&quot; &quot;42&quot; &quot;36&quot; ...
+##  $ GD  : chr [1:21] &quot;51&quot; &quot;29&quot; &quot;26&quot; &quot;22&quot; ...
+##  $ Pts : chr [1:21] &quot;86&quot; &quot;74&quot; &quot;69&quot; &quot;67&quot; ...
+##  $ Form: chr [1:21] &quot;WWon 2 - 0 against Crystal Palace on May 1st 2021.LLost 1 - 2 against Chelsea on May 8th 2021.WWon 4 - 3 agains&quot;| __truncated__ &quot;WWon 3 - 1 against Aston Villa on May 9th 2021.LLost 1 - 2 against Leicester City on May 11th 2021.LLost 2 - 4 &quot;| __truncated__ &quot;WWon 2 - 0 against Southampton on May 8th 2021.WWon 4 - 2 against Manchester United on May 13th 2021.WWon 2 - 1&quot;| __truncated__ &quot;WWon 2 - 0 against Fulham on May 1st 2021.WWon 2 - 1 against Manchester City on May 8th 2021.LLost 0 - 1 agains&quot;| __truncated__ ...</code></pre>
+<p>merapikan data frame</p>
+<pre class="r"><code>epl_table</code></pre>
+<pre><code>## # A tibble: 21 x 12
+##    ``    ``     Team   P     W     D     L     F     A     GD    Pts   Form     
+##    &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    
+##  1 1     team … Man C… 38    27    5     6     83    32    51    86    WWon 2 -…
+##  2 2     team … Man U… 38    21    11    6     73    44    29    74    WWon 3 -…
+##  3 3     team … Liver… 38    20    9     9     68    42    26    69    WWon 2 -…
+##  4 4     team … Chels… 38    19    10    9     58    36    22    67    WWon 2 -…
+##  5 5     team … Leice… 38    20    6     12    68    50    18    66    DDrew 1 …
+##  6 6     team … West … 38    19    8     11    62    47    15    65    WWon 2 -…
+##  7 7     team … Totte… 38    18    8     12    68    45    23    62    WWon 4 -…
+##  8 8     team … Arsen… 38    18    7     13    55    39    16    61    WWon 2 -…
+##  9 9     team … Leeds  38    18    5     15    62    54    8     59    LLost 0 …
+## 10 10    team … Evert… 38    17    8     13    47    48    -1    59    WWon 1 -…
+## # … with 11 more rows</code></pre>
+<pre class="r"><code>epl_table[1:2] &lt;- list(NULL)
+
+epl_table &lt;- epl_table[-21,]
+epl_table</code></pre>
+<pre><code>## # A tibble: 20 x 10
+##    Team    P     W     D     L     F     A     GD    Pts   Form                 
+##    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;                
+##  1 Man Ci… 38    27    5     6     83    32    51    86    WWon 2 - 0 against C…
+##  2 Man Utd 38    21    11    6     73    44    29    74    WWon 3 - 1 against A…
+##  3 Liverp… 38    20    9     9     68    42    26    69    WWon 2 - 0 against S…
+##  4 Chelsea 38    19    10    9     58    36    22    67    WWon 2 - 0 against F…
+##  5 Leices… 38    20    6     12    68    50    18    66    DDrew 1 - 1 against …
+##  6 West H… 38    19    8     11    62    47    15    65    WWon 2 - 1 against B…
+##  7 Totten… 38    18    8     12    68    45    23    62    WWon 4 - 0 against S…
+##  8 Arsenal 38    18    7     13    55    39    16    61    WWon 2 - 0 against N…
+##  9 Leeds   38    18    5     15    62    54    8     59    LLost 0 - 2 against …
+## 10 Everton 38    17    8     13    47    48    -1    59    WWon 1 - 0 against W…
+## 11 Aston … 38    16    7     15    55    46    9     55    LLost 1 - 3 against …
+## 12 Newcas… 38    12    9     17    46    62    -16   45    LLost 0 - 2 against …
+## 13 Wolves  38    12    9     17    36    52    -16   45    DDrew 1 - 1 against …
+## 14 Crysta… 38    12    8     18    41    66    -25   44    WWon 2 - 0 against S…
+## 15 Southa… 38    12    7     19    47    68    -21   43    LLost 0 - 2 against …
+## 16 Bright… 38    9     14    15    40    46    -6    41    WWon 2 - 0 against L…
+## 17 Burnley 38    10    9     19    33    55    -22   39    LLost 1 - 2 against …
+## 18 Fulham  38    5     13    20    27    53    -26   28    LLost 0 - 2 against …
+## 19 West B… 38    5     11    22    35    76    -41   26    DDrew 1 - 1 against …
+## 20 Sheff … 38    7     2     29    20    63    -43   23    LLost 0 - 4 against …</code></pre>
+<pre class="r"><code>str(epl_table)</code></pre>
+<pre><code>## tibble [20 × 10] (S3: tbl_df/tbl/data.frame)
+##  $ Team: chr [1:20] &quot;Man City&quot; &quot;Man Utd&quot; &quot;Liverpool&quot; &quot;Chelsea&quot; ...
+##  $ P   : chr [1:20] &quot;38&quot; &quot;38&quot; &quot;38&quot; &quot;38&quot; ...
+##  $ W   : chr [1:20] &quot;27&quot; &quot;21&quot; &quot;20&quot; &quot;19&quot; ...
+##  $ D   : chr [1:20] &quot;5&quot; &quot;11&quot; &quot;9&quot; &quot;10&quot; ...
+##  $ L   : chr [1:20] &quot;6&quot; &quot;6&quot; &quot;9&quot; &quot;9&quot; ...
+##  $ F   : chr [1:20] &quot;83&quot; &quot;73&quot; &quot;68&quot; &quot;58&quot; ...
+##  $ A   : chr [1:20] &quot;32&quot; &quot;44&quot; &quot;42&quot; &quot;36&quot; ...
+##  $ GD  : chr [1:20] &quot;51&quot; &quot;29&quot; &quot;26&quot; &quot;22&quot; ...
+##  $ Pts : chr [1:20] &quot;86&quot; &quot;74&quot; &quot;69&quot; &quot;67&quot; ...
+##  $ Form: chr [1:20] &quot;WWon 2 - 0 against Crystal Palace on May 1st 2021.LLost 1 - 2 against Chelsea on May 8th 2021.WWon 4 - 3 agains&quot;| __truncated__ &quot;WWon 3 - 1 against Aston Villa on May 9th 2021.LLost 1 - 2 against Leicester City on May 11th 2021.LLost 2 - 4 &quot;| __truncated__ &quot;WWon 2 - 0 against Southampton on May 8th 2021.WWon 4 - 2 against Manchester United on May 13th 2021.WWon 2 - 1&quot;| __truncated__ &quot;WWon 2 - 0 against Fulham on May 1st 2021.WWon 2 - 1 against Manchester City on May 8th 2021.LLost 0 - 1 agains&quot;| __truncated__ ...</code></pre>
+<p>format ulang kolom form</p>
+<pre class="r"><code>epl_table$Form[1]</code></pre>
+<pre><code>## [1] &quot;WWon 2 - 0 against Crystal Palace on May 1st 2021.LLost 1 - 2 against Chelsea on May 8th 2021.WWon 4 - 3 against Newcastle United on May 14th 2021.LLost 2 - 3 against Brighton &amp; Hove Albion on May 18th 2021.WWon 5 - 0 against Everton on May 23rd 2021.&quot;</code></pre>
+<pre class="r"><code>extract_form &lt;- function(form){
+  str_extract_all(form, &quot;WWon|DDrew|LLost&quot;)
+}
+
+form &lt;- sapply(epl_table$Form, extract_form, USE.NAMES = FALSE)
+
+str(form)</code></pre>
+<pre><code>## List of 20
+##  $ : chr [1:5] &quot;WWon&quot; &quot;LLost&quot; &quot;WWon&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;LLost&quot; &quot;LLost&quot; &quot;DDrew&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;WWon&quot; &quot;WWon&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;WWon&quot; &quot;LLost&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;DDrew&quot; &quot;LLost&quot; &quot;WWon&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;LLost&quot; &quot;DDrew&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;LLost&quot; &quot;WWon&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;WWon&quot; &quot;WWon&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;LLost&quot; &quot;WWon&quot; &quot;WWon&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;DDrew&quot; &quot;LLost&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;LLost&quot; &quot;DDrew&quot; &quot;LLost&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;LLost&quot; &quot;WWon&quot; &quot;LLost&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;DDrew&quot; &quot;WWon&quot; &quot;LLost&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;LLost&quot; &quot;WWon&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;LLost&quot; &quot;WWon&quot; &quot;WWon&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;WWon&quot; &quot;LLost&quot; &quot;DDrew&quot; &quot;WWon&quot; ...
+##  $ : chr [1:5] &quot;LLost&quot; &quot;WWon&quot; &quot;LLost&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;LLost&quot; &quot;LLost&quot; &quot;LLost&quot; &quot;DDrew&quot; ...
+##  $ : chr [1:5] &quot;DDrew&quot; &quot;LLost&quot; &quot;LLost&quot; &quot;LLost&quot; ...
+##  $ : chr [1:5] &quot;LLost&quot; &quot;LLost&quot; &quot;WWon&quot; &quot;LLost&quot; ...</code></pre>
+<p>merapikan kolom form</p>
+<pre class="r"><code>simply_form &lt;- function(form){
+  form %&gt;%
+    str_extract(&quot;W|D|L&quot;) %&gt;%
+    paste(collapse = &quot;,&quot;)
+}
+
+form &lt;- sapply(form, simply_form)
+
+str(form)</code></pre>
+<pre><code>##  chr [1:20] &quot;W,L,W,L,W&quot; &quot;W,L,L,D,W&quot; &quot;W,W,W,W,W&quot; &quot;W,W,L,W,L&quot; &quot;D,L,W,L,L&quot; ...</code></pre>
+<p>update kolom Form dengan vector form.</p>
+<pre class="r"><code>epl_table$Form &lt;- form
+
+print(epl_table)</code></pre>
+<pre><code>## # A tibble: 20 x 10
+##    Team           P     W     D     L     F     A     GD    Pts   Form     
+##    &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    
+##  1 Man City       38    27    5     6     83    32    51    86    W,L,W,L,W
+##  2 Man Utd        38    21    11    6     73    44    29    74    W,L,L,D,W
+##  3 Liverpool      38    20    9     9     68    42    26    69    W,W,W,W,W
+##  4 Chelsea        38    19    10    9     58    36    22    67    W,W,L,W,L
+##  5 Leicester      38    20    6     12    68    50    18    66    D,L,W,L,L
+##  6 West Ham       38    19    8     11    62    47    15    65    W,L,D,W,W
+##  7 Tottenham      38    18    8     12    68    45    23    62    W,L,W,L,W
+##  8 Arsenal        38    18    7     13    55    39    16    61    W,W,W,W,W
+##  9 Leeds          38    18    5     15    62    54    8     59    L,W,W,W,W
+## 10 Everton        38    17    8     13    47    48    -1    59    W,D,L,W,L
+## 11 Aston Villa    38    16    7     15    55    46    9     55    L,D,L,W,W
+## 12 Newcastle      38    12    9     17    46    62    -16   45    L,W,L,W,W
+## 13 Wolves         38    12    9     17    36    52    -16   45    D,W,L,L,L
+## 14 Crystal Palace 38    12    8     18    41    66    -25   44    W,L,W,L,L
+## 15 Southampton    38    12    7     19    47    68    -21   43    L,W,W,L,L
+## 16 Brighton       38    9     14    15    40    46    -6    41    W,L,D,W,L
+## 17 Burnley        38    10    9     19    33    55    -22   39    L,W,L,L,L
+## 18 Fulham         38    5     13    20    27    53    -26   28    L,L,L,D,L
+## 19 West Brom      38    5     11    22    35    76    -41   26    D,L,L,L,L
+## 20 Sheff Utd      38    7     2     29    20    63    -43   23    L,L,W,L,W</code></pre>
 <p>Legenda
 P : Played
 W : Won
+D : Draw
+L : Lose
 F : For
 A : Against
-GD : GD
+GD : Goal Different
 Pts : Points
 Form: Form</p>
-<pre class="r"><code>par(mfrow=c(1,1))
-barplot(dtf[, &quot;Pts&quot;],
-        # ubah warna ouline menjadi steelblue
-        border=&quot;steelblue&quot;,
-        # ubah wana box
-        col= c(&quot;grey&quot;, &quot;yellow&quot;, &quot;steelblue&quot;, &quot;green&quot;, &quot;orange&quot;),
-        # ubah nama grup dari A sampai E
-        names.arg = LETTERS[1:20],
-        # ubah orientasi menajadi horizontal
-        horiz=TRUE)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
-Referensi:
+<p>visualisasi perolehan point tertinggi</p>
+<pre class="r"><code>ggplot(data = epl_table) +
+  geom_bar(mapping = aes(x = Team, y = Pts), stat = &quot;identity&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+visualisai perbandingan jumlah goal ke kandang lawan dan kebobolan</p>
+<pre class="r"><code>ggplot(data = epl_table) +
+  geom_bar(mapping = aes(x = Team, y = GD), stat = &quot;identity&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Referensi:
 <a href="https://www.bbc.com/sport/football/premier-league/table" class="uri">https://www.bbc.com/sport/football/premier-league/table</a>
+<a href="https://www.nurandi.id/blog/web-scraping-dengan-r-dan-rvest-parsing-tabel-html/" class="uri">https://www.nurandi.id/blog/web-scraping-dengan-r-dan-rvest-parsing-tabel-html/</a>
 <a href="https://www.netlify.com/" class="uri">https://www.netlify.com/</a>
 <a href="https://gohugo.io/" class="uri">https://gohugo.io/</a>
 <a href="https://www.netlify.com/authors/david-calavera/" class="uri">https://www.netlify.com/authors/david-calavera/</a>

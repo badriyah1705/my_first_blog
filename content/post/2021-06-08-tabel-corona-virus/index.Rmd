@@ -1,0 +1,39 @@
+---
+title: Tabel Corona Virus
+author: Badriyah
+date: '2021-06-08'
+slug: tabel-corona-virus
+categories:
+  - R
+tags:
+  - Corona
+  - Covid-19
+---
+```{r}
+library(rvest)
+library(tidyverse)
+library(data.table)
+
+url <- "https://www.worldometers.info/coronavirus/"
+html <- url %>% read_html
+
+corona_table <- html %>%
+  html_node(".main_table_countries_div") %>%
+  html_table
+
+str(corona_table)
+corona_table
+corona_table[1] <- list(NULL)
+corona_table
+corona_table <- corona_table[-1:-8,]
+
+print(corona_table)
+
+```
+
+```{r}
+ggplot2::ggplot()
+ggplot(data = corona_table) +
+  geom_bar(mapping = aes(x = Country.Other, y = TotalCases), stat = "identity")
+```
+

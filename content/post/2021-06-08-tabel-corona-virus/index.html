@@ -1,0 +1,111 @@
+---
+title: Tabel Corona Virus
+author: Badriyah
+date: '2021-06-08'
+slug: tabel-corona-virus
+categories:
+  - R
+tags:
+  - Corona
+  - Covid-19
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="r"><code>library(rvest)
+
+url &lt;- &quot;https://www.worldometers.info/coronavirus/&quot;
+html &lt;- url %&gt;% read_html
+
+corona_table &lt;- html %&gt;%
+  html_node(&quot;.main_table_countries_div&quot;) %&gt;%
+  html_table
+
+str(corona_table)</code></pre>
+<pre><code>## tibble [238 × 22] (S3: tbl_df/tbl/data.frame)
+##  $ #                  : int [1:238] NA NA NA NA NA NA NA NA 1 2 ...
+##  $ Country,Other      : chr [1:238] &quot;North America&quot; &quot;Asia&quot; &quot;South America&quot; &quot;Europe&quot; ...
+##  $ TotalCases         : chr [1:238] &quot;40,003,899&quot; &quot;52,653,093&quot; &quot;29,796,980&quot; &quot;46,946,403&quot; ...
+##  $ NewCases           : chr [1:238] &quot;+1,870&quot; &quot;+53,474&quot; &quot;+2,832&quot; &quot;+17,667&quot; ...
+##  $ TotalDeaths        : chr [1:238] &quot;903,176&quot; &quot;715,801&quot; &quot;920,090&quot; &quot;1,080,800&quot; ...
+##  $ NewDeaths          : chr [1:238] &quot;+65&quot; &quot;+1,042&quot; &quot;+58&quot; &quot;+1,021&quot; ...
+##  $ TotalRecovered     : chr [1:238] &quot;32,999,855&quot; &quot;49,379,356&quot; &quot;26,943,195&quot; &quot;44,136,761&quot; ...
+##  $ NewRecovered       : chr [1:238] &quot;+2,548&quot; &quot;+68,172&quot; &quot;+2,152&quot; &quot;+37,611&quot; ...
+##  $ ActiveCases        : chr [1:238] &quot;6,100,868&quot; &quot;2,557,936&quot; &quot;1,933,695&quot; &quot;1,728,842&quot; ...
+##  $ Serious,Critical   : chr [1:238] &quot;12,775&quot; &quot;28,352&quot; &quot;30,781&quot; &quot;11,932&quot; ...
+##  $ Tot Cases/1M pop   : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Deaths/1M pop      : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ TotalTests         : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Tests/1M pop       : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Population         : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Continent          : chr [1:238] &quot;North America&quot; &quot;Asia&quot; &quot;South America&quot; &quot;Europe&quot; ...
+##  $ 1 Caseevery X ppl  : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ 1 Deathevery X ppl : chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ 1 Testevery X ppl  : int [1:238] NA NA NA NA NA NA NA NA 1 4 ...
+##  $ New Cases/1M pop   : num [1:238] NA NA NA NA NA NA NA NA 0.9 NA ...
+##  $ New Deaths/1M pop  : num [1:238] NA NA NA NA NA NA NA NA 0.03 NA ...
+##  $ Active Cases/1M pop: chr [1:238] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...</code></pre>
+<pre class="r"><code>corona_table</code></pre>
+<pre><code>## # A tibble: 238 x 22
+##      `#` `Country,Other` TotalCases  NewCases  TotalDeaths NewDeaths
+##    &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;    
+##  1    NA &quot;North America&quot; 40,003,899  &quot;+1,870&quot;  903,176     &quot;+65&quot;    
+##  2    NA &quot;Asia&quot;          52,653,093  &quot;+53,474&quot; 715,801     &quot;+1,042&quot; 
+##  3    NA &quot;South America&quot; 29,796,980  &quot;+2,832&quot;  920,090     &quot;+58&quot;    
+##  4    NA &quot;Europe&quot;        46,946,403  &quot;+17,667&quot; 1,080,800   &quot;+1,021&quot; 
+##  5    NA &quot;Africa&quot;        4,977,551   &quot;+1,507&quot;  132,965     &quot;+17&quot;    
+##  6    NA &quot;Oceania&quot;       69,622      &quot;+117&quot;    1,254       &quot;&quot;       
+##  7    NA &quot;&quot;              721         &quot;&quot;        15          &quot;&quot;       
+##  8    NA &quot;World&quot;         174,448,269 &quot;+77,467&quot; 3,754,101   &quot;+2,203&quot; 
+##  9     1 &quot;USA&quot;           34,227,534  &quot;+297&quot;    612,710     &quot;+9&quot;     
+## 10     2 &quot;India&quot;         28,996,949  &quot;&quot;        351,344     &quot;&quot;       
+## # … with 228 more rows, and 16 more variables: TotalRecovered &lt;chr&gt;,
+## #   NewRecovered &lt;chr&gt;, ActiveCases &lt;chr&gt;, Serious,Critical &lt;chr&gt;,
+## #   Tot\U00a0Cases/1M pop &lt;chr&gt;, Deaths/1M pop &lt;chr&gt;, TotalTests &lt;chr&gt;,
+## #   Tests/1M pop &lt;chr&gt;, Population &lt;chr&gt;, Continent &lt;chr&gt;,
+## #   1 Caseevery X ppl &lt;chr&gt;, 1 Deathevery X ppl &lt;chr&gt;, 1 Testevery X ppl &lt;int&gt;,
+## #   New Cases/1M pop &lt;dbl&gt;, New Deaths/1M pop &lt;dbl&gt;, Active Cases/1M pop &lt;chr&gt;</code></pre>
+<pre class="r"><code>corona_table[1] &lt;- list(NULL)
+corona_table</code></pre>
+<pre><code>## # A tibble: 238 x 21
+##    `Country,Other` TotalCases  NewCases  TotalDeaths NewDeaths TotalRecovered
+##    &lt;chr&gt;           &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;         
+##  1 &quot;North America&quot; 40,003,899  &quot;+1,870&quot;  903,176     &quot;+65&quot;     32,999,855    
+##  2 &quot;Asia&quot;          52,653,093  &quot;+53,474&quot; 715,801     &quot;+1,042&quot;  49,379,356    
+##  3 &quot;South America&quot; 29,796,980  &quot;+2,832&quot;  920,090     &quot;+58&quot;     26,943,195    
+##  4 &quot;Europe&quot;        46,946,403  &quot;+17,667&quot; 1,080,800   &quot;+1,021&quot;  44,136,761    
+##  5 &quot;Africa&quot;        4,977,551   &quot;+1,507&quot;  132,965     &quot;+17&quot;     4,479,389     
+##  6 &quot;Oceania&quot;       69,622      &quot;+117&quot;    1,254       &quot;&quot;        66,948        
+##  7 &quot;&quot;              721         &quot;&quot;        15          &quot;&quot;        706           
+##  8 &quot;World&quot;         174,448,269 &quot;+77,467&quot; 3,754,101   &quot;+2,203&quot;  158,006,210   
+##  9 &quot;USA&quot;           34,227,534  &quot;+297&quot;    612,710     &quot;+9&quot;      28,177,659    
+## 10 &quot;India&quot;         28,996,949  &quot;&quot;        351,344     &quot;&quot;        27,341,462    
+## # … with 228 more rows, and 15 more variables: NewRecovered &lt;chr&gt;,
+## #   ActiveCases &lt;chr&gt;, Serious,Critical &lt;chr&gt;, Tot\U00a0Cases/1M pop &lt;chr&gt;,
+## #   Deaths/1M pop &lt;chr&gt;, TotalTests &lt;chr&gt;, Tests/1M pop &lt;chr&gt;,
+## #   Population &lt;chr&gt;, Continent &lt;chr&gt;, 1 Caseevery X ppl &lt;chr&gt;,
+## #   1 Deathevery X ppl &lt;chr&gt;, 1 Testevery X ppl &lt;int&gt;, New Cases/1M pop &lt;dbl&gt;,
+## #   New Deaths/1M pop &lt;dbl&gt;, Active Cases/1M pop &lt;chr&gt;</code></pre>
+<pre class="r"><code>corona_table &lt;- corona_table[-1:-8,]
+
+print(corona_table)</code></pre>
+<pre><code>## # A tibble: 230 x 21
+##    `Country,Other` TotalCases NewCases TotalDeaths NewDeaths TotalRecovered
+##    &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;         
+##  1 USA             34,227,534 &quot;+297&quot;   612,710     &quot;+9&quot;      28,177,659    
+##  2 India           28,996,949 &quot;&quot;       351,344     &quot;&quot;        27,341,462    
+##  3 Brazil          16,985,812 &quot;&quot;       474,614     &quot;&quot;        15,408,401    
+##  4 France          5,713,917  &quot;&quot;       110,062     &quot;&quot;        5,425,197     
+##  5 Turkey          5,293,627  &quot;&quot;       48,255      &quot;&quot;        5,167,350     
+##  6 Russia          5,145,843  &quot;+9,977&quot; 124,496     &quot;+379&quot;    4,752,085     
+##  7 UK              4,522,476  &quot;&quot;       127,841     &quot;&quot;        4,277,098     
+##  8 Italy           4,233,698  &quot;&quot;       126,588     &quot;&quot;        3,918,657     
+##  9 Argentina       3,977,634  &quot;&quot;       81,946      &quot;&quot;        3,560,148     
+## 10 Germany         3,710,341  &quot;&quot;       89,965      &quot;&quot;        3,549,900     
+## # … with 220 more rows, and 15 more variables: NewRecovered &lt;chr&gt;,
+## #   ActiveCases &lt;chr&gt;, Serious,Critical &lt;chr&gt;, Tot\U00a0Cases/1M pop &lt;chr&gt;,
+## #   Deaths/1M pop &lt;chr&gt;, TotalTests &lt;chr&gt;, Tests/1M pop &lt;chr&gt;,
+## #   Population &lt;chr&gt;, Continent &lt;chr&gt;, 1 Caseevery X ppl &lt;chr&gt;,
+## #   1 Deathevery X ppl &lt;chr&gt;, 1 Testevery X ppl &lt;int&gt;, New Cases/1M pop &lt;dbl&gt;,
+## #   New Deaths/1M pop &lt;dbl&gt;, Active Cases/1M pop &lt;chr&gt;</code></pre>
