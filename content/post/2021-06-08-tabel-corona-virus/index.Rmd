@@ -11,8 +11,11 @@ tags:
 ---
 ```{r}
 library(rvest)
+<<<<<<< HEAD
 library(tidyverse)
 library(data.table)
+=======
+>>>>>>> eb3293f8f8be590a32295a766bb38c1e1c6a7df5
 
 url <- "https://www.worldometers.info/coronavirus/"
 html <- url %>% read_html
@@ -30,6 +33,7 @@ corona_table <- corona_table[-1:-8,]
 print(corona_table)
 
 ```
+<<<<<<< HEAD
 
 ```{r}
 ggplot2::ggplot()
@@ -37,3 +41,9 @@ ggplot(data = corona_table) +
   geom_bar(mapping = aes(x = Country.Other, y = TotalCases), stat = "identity")
 ```
 
+=======
+```
+
+
+
+>>>>>>> eb3293f8f8be590a32295a766bb38c1e1c6a7df5
