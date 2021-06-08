@@ -1,50 +1,112 @@
 ---
-title: Table Mining with R
-author: Badriyah
+title: Web Scraping with R: Klasemen Akhir Liga Premier 2021
+author: Ufil Hidayatul Laili, Badriyah
 date: '2021-04-18'
-slug: table-mining-with-r
+slug: Web Scraping
 categories:
   - R
 tags:
   - R Markdown
   - plot
 ---
-Klasemen Sementara Liga Premier
 
-Jadwal Pertandingan Premier League 2020/2021 diawali 12 September 2020 dan berakhir pada 23 Mei 2021. Berikut adalah tabel klasemen sementara, update terbaru Live Score, disertai dengan daftar Top Score dan visualisasinya.
+LigaPremier 2020/2021 diawali 12 September 2020 dan berakhir pada 23 Mei 2021. Berikut ini adalah tabel hasil perolehan Liga Premier, update terbaru Live Score, disertai dengan daftar Top Score dan visualisasinya.
 
 Sumber: https://www.bbc.com/sport/football/tables
-Last updated 17th April 2021 at 14:14
+Last updated 4rd  Juni 2021 at 14:14
 
+loading library
 ```{r}
-dtf<- read.table(file="epl.csv", header =TRUE, sep = ",")
-dtf[1:1] <- list(NULL)
-print (dtf)
+library(rvest)
+library(stringr)
+library(tidyverse)
+library(data.table)
+```
+
+membaca file HTML dari halaman website 
+```{r}
+url <- "https://www.bbc.com/sport/football/premier-league/table"
+html <- url %>% read_html
+```
+
+membuat data frame dan menampilkan strukturnya
+```{r}
+epl_table <- html %>%
+  html_node(".gs-o-table") %>%
+  html_table
+
+str(epl_table)
+```
+
+merapikan data frame
+```{r}
+epl_table
+epl_table[1:2] <- list(NULL)
+
+epl_table <- epl_table[-21,]
+epl_table
+str(epl_table)
+```
+
+format ulang kolom form
+```{r}
+epl_table$Form[1]
+
+extract_form <- function(form){
+  str_extract_all(form, "WWon|DDrew|LLost")
+}
+
+form <- sapply(epl_table$Form, extract_form, USE.NAMES = FALSE)
+
+str(form)
+```
+
+merapikan kolom form
+```{r}
+simply_form <- function(form){
+  form %>%
+    str_extract("W|D|L") %>%
+    paste(collapse = ",")
+}
+
+form <- sapply(form, simply_form)
+
+str(form)
+```
+
+update kolom Form dengan vector form.
+```{r}
+epl_table$Form <- form
+
+print(epl_table)
 ```
 
 Legenda
 P   : Played
 W   : Won
+D   : Draw
+L   : Lose
 F   : For
 A   : Against
-GD  : GD
+GD  : Goal Different
 Pts : Points
 Form: Form
 
+visualisasi perolehan point tertinggi
 ```{r}
-par(mfrow=c(1,1))
-barplot(dtf[, "Pts"],
-        # ubah warna ouline menjadi steelblue
-        border="steelblue",
-        # ubah wana box
-        col= c("grey", "yellow", "steelblue", "green", "orange"),
-        # ubah nama grup dari A sampai E
-        names.arg = LETTERS[1:20],
-        # ubah orientasi menajadi horizontal
-        horiz=TRUE)
+ggplot(data = epl_table) +
+  geom_bar(mapping = aes(x = Team, y = Pts), stat = "identity")
 ```
+visualisai perbandingan jumlah goal ke kandang lawan dan kebobolan
+```{r}
+ggplot(data = epl_table) +
+  geom_bar(mapping = aes(x = Team, y = GD), stat = "identity")
+```
+
+
 Referensi:
 https://www.bbc.com/sport/football/premier-league/table
+https://www.nurandi.id/blog/web-scraping-dengan-r-dan-rvest-parsing-tabel-html/
 https://www.netlify.com/
 https://gohugo.io/
 https://www.netlify.com/authors/david-calavera/
